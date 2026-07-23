@@ -45,15 +45,39 @@ export default function ThemeToggle() {
       return;
     }
 
-    let x = e.clientX;
-    let y = e.clientY;
+    let x = 0;
+    let y = 0;
 
-    // On mobile touch events or SVG child clicks, clientX/clientY can be zero or undefined.
-    // Use the button's exact bounding box center as fallback/primary coordinate.
-    if (e.currentTarget && typeof e.currentTarget.getBoundingClientRect === 'function') {
+    // 1. Try touch event coordinates for mobile touch screens
+    if (e.nativeEvent && e.nativeEvent.touches && e.nativeEvent.touches[0]) {
+      x = e.nativeEvent.touches[0].clientX;
+      y = e.nativeEvent.touches[0].clientY;
+    } else if (e.nativeEvent && e.nativeEvent.changedTouches && e.nativeEvent.changedTouches[0]) {
+      x = e.nativeEvent.changedTouches[0].clientX;
+      y = e.nativeEvent.changedTouches[0].clientY;
+    }
+
+    // 2. Try button bounding client rect center
+    if ((!x || !y) && e.currentTarget && typeof e.currentTarget.getBoundingClientRect === 'function') {
       const rect = e.currentTarget.getBoundingClientRect();
-      x = rect.left + rect.width / 2;
-      y = rect.top + rect.height / 2;
+      if (rect.width > 0 && rect.height > 0) {
+        x = rect.left + rect.width / 2;
+        y = rect.top + rect.height / 2;
+      }
+    }
+
+    // 3. Fallback to click coordinates if available
+    if ((!x || !y) && e.clientX && e.clientY) {
+      x = e.clientX;
+      y = e.clientY;
+    }
+
+    // 4. Hard fallback to top-right button area if x/y is 0 or invalid (prevents top-left origin)
+    if (!x || isNaN(x) || x <= 0) {
+      x = typeof window !== 'undefined' ? window.innerWidth - 60 : 300;
+    }
+    if (!y || isNaN(y) || y <= 0) {
+      y = 45;
     }
 
     const endRadius = Math.hypot(

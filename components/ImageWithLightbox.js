@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 
-export default function ImageWithLightbox({ src, alt }) {
+export default function ImageWithLightbox({ src, alt, objectFit = 'cover' }) {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -64,7 +64,7 @@ export default function ImageWithLightbox({ src, alt }) {
       >
         <Image 
           src={src} 
-          alt={alt} 
+          alt={alt || 'Image lightbox'} 
           fill 
           style={{ objectFit: 'contain' }} 
           unoptimized
@@ -108,9 +108,9 @@ export default function ImageWithLightbox({ src, alt }) {
       >
         <Image 
           src={src} 
-          alt={alt} 
+          alt={alt || 'Image preview'} 
           fill 
-          style={{ objectFit: 'cover' }} 
+          style={{ objectFit }} 
         />
       </div>
 

@@ -45,8 +45,17 @@ export default function ThemeToggle() {
       return;
     }
 
-    const x = e.clientX;
-    const y = e.clientY;
+    let x = e.clientX;
+    let y = e.clientY;
+
+    // On mobile touch events or SVG child clicks, clientX/clientY can be zero or undefined.
+    // Use the button's exact bounding box center as fallback/primary coordinate.
+    if (e.currentTarget && typeof e.currentTarget.getBoundingClientRect === 'function') {
+      const rect = e.currentTarget.getBoundingClientRect();
+      x = rect.left + rect.width / 2;
+      y = rect.top + rect.height / 2;
+    }
+
     const endRadius = Math.hypot(
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y)

@@ -195,20 +195,32 @@ export default function ProjectDetailView({ project }) {
       </div>
 
       <style jsx>{`
+        :global(.project-detail-container p) {
+          word-break: break-word;
+          overflow-wrap: anywhere;
+        }
+
         @media (max-width: 768px) {
           :global(.project-detail-container) {
             padding: 2rem 1.25rem !important;
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
           }
           :global(.project-title) {
-            font-size: clamp(1.8rem, 6.5vw, 2.5rem) !important;
+            font-size: clamp(1.6rem, 6.5vw, 2.4rem) !important;
+            word-break: break-word !important;
           }
           :global(.project-hero-image) {
-            height: 280px !important;
+            height: auto !important;
+            min-height: 220px !important;
+            aspect-ratio: 16 / 10 !important;
             border-radius: 16px !important;
             margin-bottom: 2rem !important;
           }
           :global(.project-block-image) {
-            height: 240px !important;
+            height: auto !important;
+            min-height: 200px !important;
+            aspect-ratio: 16 / 10 !important;
             border-radius: 16px !important;
           }
           :global(.project-grid-2) {

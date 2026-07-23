@@ -129,21 +129,22 @@ export default function WorkSection({ projects }) {
 
         @media (max-width: 768px) {
           :global(.work-section-wrapper) {
-            padding: 2rem 0 !important;
+            padding: 3rem 1.25rem !important;
           }
           .work-header-mobile {
             display: block;
-            margin-bottom: 0.5rem;
-            padding: 0 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0;
           }
           .desktop-only-title {
             display: none;
           }
           .work-content {
-            padding: 0.5rem 1rem !important;
+            padding: 1.5rem 0 !important;
           }
           .work-gallery {
-            height: 480px !important;
+            height: 420px !important;
+            padding: 0.5rem 0 !important;
           }
         }
       `}</style>

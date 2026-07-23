@@ -1,0 +1,337 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+:root {
+  --color-dark: #1A2133;
+  --color-light-blue: #E0EFF6;
+  --color-pink: #FF50AD;
+  --color-purple: #BF29E2;
+  --color-red: #D91B38;
+  --color-white: #FFFFFF;
+  --color-bg-base: #F8FBFC;
+
+  --color-nav-bg: #FFFFFF;
+  --color-nav-text: #BF29E2;
+  --color-card-bg: #FFFFFF;
+  --color-footer-bg: #FFFFFF;
+  --color-text-muted: #334155;
+  --color-border: #cccccc;
+  --color-image-bg: #E0EFF6;
+
+  --grid-color: rgba(224, 239, 246, 0.5);
+  --glow-left-rgb: 255, 80, 83;
+  --glow-right-rgb: 255, 80, 173;
+  --glow-button-rgb: 255, 80, 173;
+}
+
+[data-theme='dark'] {
+  --color-bg-base: #1A2133;
+  --color-dark: #FFFFFF;
+  --color-light-blue: #E0EFF6;
+  --color-pink: #50A2FF;
+  --color-purple: #3C2FB4;
+  --color-red: #1065C7;
+
+  --color-nav-bg: rgba(255, 255, 255, 0.1);
+  --color-nav-text: #FFFFFF;
+  --color-card-bg: rgba(255, 255, 255, 0.1);
+  --color-footer-bg: #161819;
+  --color-text-muted: #E2E8F0;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-image-bg: #16181F;
+
+  --grid-color: #161819;
+  --glow-left-rgb: 16, 101, 199;
+  --glow-right-rgb: 60, 47, 180;
+  --glow-button-rgb: 80, 162, 255;
+}
+
+[data-theme='dark'] .text-gradient {
+  background: var(--color-pink);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-figtree), 'Outfit', sans-serif;
+  color: var(--color-dark);
+  background-color: var(--color-bg-base);
+  min-height: 100vh;
+  /* Grid pattern matching the design */
+  background-image:
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+.pill-button {
+  font-family: 'Outfit', var(--font-figtree), sans-serif;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background-color: var(--color-pink);
+  color: var(--color-white);
+}
+
+/* Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.responsive-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .responsive-grid-2 {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+.responsive-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .responsive-row {
+    flex-direction: row;
+    gap: 4rem;
+  }
+}
+
+.whoami-grid {
+  display: grid;
+  grid-template-areas:
+    "title"
+    "images"
+    "text";
+  gap: 2rem;
+  text-align: justify;
+  text-align-last: left;
+}
+
+.whoami-grid .whoami-title {
+  grid-area: title;
+  margin-bottom: 0 !important;
+  text-align: left;
+}
+
+.whoami-grid .whoami-images {
+  grid-area: images;
+}
+
+.whoami-grid .whoami-text {
+  grid-area: text;
+  text-align: justify;
+  text-align-last: left;
+}
+
+.whoami-grid .whoami-content {
+  display: contents;
+  text-align: justify;
+  text-align-last: left;
+}
+
+@media (min-width: 768px) {
+  .whoami-grid .whoami-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    grid-area: content;
+    gap: 1.5rem;
+  }
+
+  .whoami-grid .whoami-title {
+    margin-bottom: 0 !important;
+  }
+
+  .whoami-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "images content";
+    gap: 4rem;
+  }
+
+  .whoami-grid.reverse {
+    grid-template-areas:
+      "content images";
+  }
+}
+
+.experience-card {
+  display: grid;
+  grid-template-areas:
+    "title"
+    "image"
+    "desc"
+    "button";
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.exp-image {
+  grid-area: image;
+}
+
+.exp-title {
+  grid-area: title;
+}
+
+.exp-desc {
+  grid-area: desc;
+}
+
+.exp-button {
+  grid-area: button;
+}
+
+@media (min-width: 768px) {
+  .experience-card {
+    grid-template-columns: 400px 1fr;
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      "image title"
+      "image desc"
+      "image button";
+    gap: 1rem 3rem;
+    align-items: center;
+  }
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, var(--color-purple), var(--color-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-pink {
+  color: var(--color-pink);
+}
+
+.text-dark {
+  color: var(--color-dark);
+}
+
+.pill-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.pill-button-primary {
+  background: linear-gradient(90deg, var(--color-pink), var(--color-purple));
+  color: var(--color-white);
+  box-shadow: 0 4px 15px rgba(var(--glow-button-rgb), 0.3);
+}
+
+.pill-button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(var(--glow-button-rgb), 0.4);
+}
+
+.pill-button-outline {
+  background: var(--color-white);
+  color: var(--color-purple);
+  border: 1px solid var(--color-purple);
+}
+
+.pill-button-outline:hover {
+  background: var(--color-light-blue);
+}
+
+/* Gradients for section backgrounds */
+.bg-glow-left {
+  position: absolute;
+  left: 0;
+  width: 350px;
+  height: 800px;
+  background: linear-gradient(90deg, rgb(var(--glow-left-rgb)) 0%, rgba(var(--glow-left-rgb), 0) 84%);
+  z-index: -1;
+  filter: blur(100px);
+  opacity: 0.6;
+}
+
+.bg-glow-right {
+  position: absolute;
+  right: 0;
+  width: 500px;
+  height: 1000px;
+  background: linear-gradient(to left, rgb(var(--glow-right-rgb)) 0%, rgba(var(--glow-right-rgb), 0) 100%);
+  z-index: -1;
+  filter: blur(120px);
+  opacity: 0.5;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-33.3333%);
+  }
+}
+
+/* View Transition API for Theme Toggle Ripple */
+::view-transition-image-pair(root) {
+  isolation: isolate;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* When switching TO dark mode, the new (dark) snapshot should be on top and grow */
+[data-theme='dark']::view-transition-old(root) {
+  z-index: 1;
+}
+
+[data-theme='dark']::view-transition-new(root) {
+  z-index: 9999;
+}
+
+/* When switching TO light mode, the old (dark) snapshot should be on top and shrink */
+[data-theme='light']::view-transition-old(root) {
+  z-index: 9999;
+}
+
+[data-theme='light']::view-transition-new(root) {
+  z-index: 1;
+}

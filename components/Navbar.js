@@ -145,8 +145,8 @@ export default function Navbar() {
           }
           :global(.nav-actions) {
             position: fixed !important;
-            top: 2rem !important;
-            right: 1.5rem !important;
+            top: 1rem !important;
+            right: 1.25rem !important;
             z-index: 100000 !important;
             pointer-events: auto !important;
           }

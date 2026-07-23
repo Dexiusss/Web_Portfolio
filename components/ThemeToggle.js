@@ -46,15 +46,15 @@ export default function ThemeToggle() {
     }
 
     const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-    let x = 0;
-    let y = 0;
+    let originStr = '50% 0px';
+    let endRadius = 1000;
 
     if (isMobile) {
-      // On mobile view, transition starts from top-center of the screen
-      x = window.innerWidth / 2;
-      y = 0;
+      originStr = '50% 0px';
+      endRadius = Math.hypot(window.innerWidth, window.innerHeight);
     } else {
-      // On desktop view, transition starts from the button position
+      let x = 0;
+      let y = 0;
       if (e.currentTarget && typeof e.currentTarget.getBoundingClientRect === 'function') {
         const rect = e.currentTarget.getBoundingClientRect();
         x = rect.left + rect.width / 2;
@@ -66,12 +66,12 @@ export default function ThemeToggle() {
         x = window.innerWidth - 60;
         y = 45;
       }
+      originStr = `${x}px ${y}px`;
+      endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
     }
-
-    const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    );
 
     const transition = document.startViewTransition(() => {
       flushSync(() => {
@@ -83,13 +83,13 @@ export default function ThemeToggle() {
       document.documentElement.animate(
         {
           clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${endRadius}px at ${x}px ${y}px)`
+            `circle(0px at ${originStr})`,
+            `circle(${endRadius}px at ${originStr})`
           ],
         },
         {
           duration: 450,
-          easing: 'ease-in-out',
+          easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
           pseudoElement: '::view-transition-new(root)',
         }
       );

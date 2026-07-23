@@ -45,39 +45,27 @@ export default function ThemeToggle() {
       return;
     }
 
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
     let x = 0;
     let y = 0;
 
-    // 1. Try touch event coordinates for mobile touch screens
-    if (e.nativeEvent && e.nativeEvent.touches && e.nativeEvent.touches[0]) {
-      x = e.nativeEvent.touches[0].clientX;
-      y = e.nativeEvent.touches[0].clientY;
-    } else if (e.nativeEvent && e.nativeEvent.changedTouches && e.nativeEvent.changedTouches[0]) {
-      x = e.nativeEvent.changedTouches[0].clientX;
-      y = e.nativeEvent.changedTouches[0].clientY;
-    }
-
-    // 2. Try button bounding client rect center
-    if ((!x || !y) && e.currentTarget && typeof e.currentTarget.getBoundingClientRect === 'function') {
-      const rect = e.currentTarget.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
+    if (isMobile) {
+      // On mobile view, transition starts from top-center of the screen
+      x = window.innerWidth / 2;
+      y = 0;
+    } else {
+      // On desktop view, transition starts from the button position
+      if (e.currentTarget && typeof e.currentTarget.getBoundingClientRect === 'function') {
+        const rect = e.currentTarget.getBoundingClientRect();
         x = rect.left + rect.width / 2;
         y = rect.top + rect.height / 2;
+      } else if (e.clientX && e.clientY) {
+        x = e.clientX;
+        y = e.clientY;
+      } else {
+        x = window.innerWidth - 60;
+        y = 45;
       }
-    }
-
-    // 3. Fallback to click coordinates if available
-    if ((!x || !y) && e.clientX && e.clientY) {
-      x = e.clientX;
-      y = e.clientY;
-    }
-
-    // 4. Hard fallback to top-right button area if x/y is 0 or invalid (prevents top-left origin)
-    if (!x || isNaN(x) || x <= 0) {
-      x = typeof window !== 'undefined' ? window.innerWidth - 60 : 300;
-    }
-    if (!y || isNaN(y) || y <= 0) {
-      y = 45;
     }
 
     const endRadius = Math.hypot(
@@ -92,20 +80,17 @@ export default function ThemeToggle() {
     });
 
     transition.ready.then(() => {
-      const clipPath = [
-        `circle(0px at ${x}px ${y}px)`,
-        `circle(${endRadius}px at ${x}px ${y}px)`
-      ];
       document.documentElement.animate(
         {
-          clipPath: isDark ? clipPath.reverse() : clipPath,
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`
+          ],
         },
         {
-          duration: 500,
+          duration: 450,
           easing: 'ease-in-out',
-          pseudoElement: isDark
-            ? '::view-transition-old(root)'
-            : '::view-transition-new(root)',
+          pseudoElement: '::view-transition-new(root)',
         }
       );
     });

@@ -1,26 +1,40 @@
 import { createClient } from '@supabase/supabase-js';
 import ExperiencesList from '@/components/ExperiencesList';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { mockProjects } from '@/lib/data';
 
 export const revalidate = 0;
 
-export default async function Experiences() {
-  const { data: projects, error } = await supabase
-    .from('projects')
-    .select('*')
-    .order('created_at', { ascending: false });
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
+}
 
-  const safeProjects = projects
+export default async function Experiences() {
+  const supabase = getSupabase();
+  let projects = null;
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (data) projects = data;
+    } catch (e) {
+      console.error('Experiences page DB error:', e);
+    }
+  }
+
+  const safeProjects = (projects && projects.length > 0)
     ? projects
       .filter(p => !p.is_archived)
       .map(p => ({
         ...p,
         thumbnail_url: p.thumbnail_url || (Array.isArray(p.content_blocks) ? p.content_blocks.find(b => b.type === '_meta')?.thumbnail_url : null) || p.image_url
       }))
-    : [];
+    : mockProjects;
 
   return (
     <main style={{ position: 'relative', overflow: 'hidden', minHeight: '80vh' }}>

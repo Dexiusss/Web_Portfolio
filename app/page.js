@@ -5,40 +5,61 @@ import ExpertiseSection from '@/components/ExpertiseSection';
 import WorkSection from '@/components/WorkSection';
 import SoftwareMarquee from '@/components/SoftwareMarquee';
 import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { mockProjects, mockExperiences } from '@/lib/data';
 
 export const revalidate = 0;
 
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
+}
+
 export default async function Home() {
-  const { data: projects } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
-  const { data: experiences } = await supabase.from('experiences').select('*').order('created_at', { ascending: true });
-  const { data: software } = await supabase.from('software').select('*').order('order_index', { ascending: true });
-  
-  const { data: settingsData } = await supabase.from('settings').select('*');
-  const settings = {};
-  if (settingsData) {
-    settingsData.forEach(item => {
-      settings[item.key] = item.value;
-    });
+  const supabase = getSupabase();
+  let projects = null;
+  let experiences = null;
+  let software = null;
+  let settings = {};
+
+  if (supabase) {
+    try {
+      const { data: pData } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+      const { data: eData } = await supabase.from('experiences').select('*').order('created_at', { ascending: true });
+      const { data: sData } = await supabase.from('software').select('*').order('order_index', { ascending: true });
+      const { data: stData } = await supabase.from('settings').select('*');
+
+      if (pData) projects = pData;
+      if (eData) experiences = eData;
+      if (sData) software = sData;
+      if (stData) {
+        stData.forEach(item => {
+          settings[item.key] = item.value;
+        });
+      }
+    } catch (e) {
+      console.error('Database query error:', e);
+    }
   }
 
-  const safeProjects = projects
+  const safeProjects = (projects && projects.length > 0)
     ? projects
         .filter(p => !p.is_archived)
         .map(p => ({
           ...p,
           thumbnail_url: p.thumbnail_url || (Array.isArray(p.content_blocks) ? p.content_blocks.find(b => b.type === '_meta')?.thumbnail_url : null) || p.image_url
         }))
-    : [];
-  const safeExperiences = experiences ? experiences.filter(e => !e.is_archived) : [];
+    : mockProjects;
+
+  const safeExperiences = (experiences && experiences.length > 0)
+    ? experiences.filter(e => !e.is_archived)
+    : mockExperiences;
+
   const safeSoftware = software || [];
 
   return (
     <main style={{ position: 'relative', overflow: 'hidden' }}>
-      {/* Background gradients */}
       <div className="bg-glow-left" style={{ top: '5%' }} />
       <div className="bg-glow-right" style={{ top: '30%' }} />
       <div className="bg-glow-left" style={{ top: '65%' }} />

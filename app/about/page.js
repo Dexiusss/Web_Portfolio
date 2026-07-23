@@ -2,24 +2,41 @@ import WhoAmI from '@/components/WhoAmI';
 import BlurText from '@/components/BlurText';
 import FadeInWrapper from '@/components/FadeInWrapper';
 import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { mockExperiences } from '@/lib/data';
 
 export const revalidate = 0;
 
-export default async function About() {
-  const { data: experiences } = await supabase.from('experiences').select('*').order('created_at', { ascending: true });
-  const safeExperiences = experiences ? experiences.filter(e => !e.is_archived) : [];
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
+}
 
-  const { data: settingsData } = await supabase.from('settings').select('*');
-  const settings = {};
-  if (settingsData) {
-    settingsData.forEach(item => {
-      settings[item.key] = item.value;
-    });
+export default async function About() {
+  const supabase = getSupabase();
+  let experiences = null;
+  let settings = {};
+
+  if (supabase) {
+    try {
+      const { data: eData } = await supabase.from('experiences').select('*').order('created_at', { ascending: true });
+      const { data: stData } = await supabase.from('settings').select('*');
+
+      if (eData) experiences = eData;
+      if (stData) {
+        stData.forEach(item => {
+          settings[item.key] = item.value;
+        });
+      }
+    } catch (e) {
+      console.error('About page DB error:', e);
+    }
   }
+
+  const safeExperiences = (experiences && experiences.length > 0)
+    ? experiences.filter(e => !e.is_archived)
+    : mockExperiences;
 
   return (
     <main style={{ position: 'relative', overflow: 'hidden', minHeight: '80vh' }}>

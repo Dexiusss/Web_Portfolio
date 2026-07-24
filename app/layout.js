@@ -4,6 +4,7 @@ import { PageTransitionProvider } from '@/components/PageTransitionContext';
 import Navbar from '@/components/Navbar';
 import GlobalFooter from '@/components/GlobalFooter';
 import { Figtree } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/react';
 
 const figtree = Figtree({ 
   subsets: ['latin'],
@@ -47,6 +48,7 @@ export default function RootLayout({ children }) {
             <GlobalFooter />
           </PageTransitionProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
